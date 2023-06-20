@@ -1,0 +1,30 @@
+version: "2.1"
+
+services:
+
+  dev:
+    image: nginx:alpine
+    networks:
+      - traefik
+    volumes:
+      - "${CONTENT_DIR:-./public}:/usr/share/nginx/html"
+    ports:
+      - 80:80
+
+  web:
+    image: nginx:alpine
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - "${CONTENT_DIR:-./public}:/usr/share/nginx/html"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=demo.approov.io"
+      - "traefik.docker.network=traefik"
+      - "traefik.port=80"
+      - "traefik.frontend.rule=Host:demo.approov.io,approovr.net"
+
+networks:
+  traefik:
+    external: true
