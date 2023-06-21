@@ -9,8 +9,9 @@ This guide assumes that you are in the EC2 server that you setup by following th
 First, create a docker network for Traefik:
 
 ```console
- docker network create traefik
+sudo docker network create traefik
 ```
+> **NOTE:** This network should already exist if you followed to the letter the [Traefik setup](https://github.com/approov/aws-ec2-traefik-setup).
 
 Now, git clone this repo into the home folder `/home/ec2-user`:
 
@@ -18,7 +19,7 @@ Now, git clone this repo into the home folder `/home/ec2-user`:
 git@github.com:approov/aws-ec2-traefik-setup.git
 ```
 
-> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it.
+> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it. The default values are set in the `docker-compose.yml` file at the service `web`.
 
 Next, get inside the repo:
 
@@ -44,9 +45,17 @@ Now, to tail the logs (optional):
 sudo docker-compose logs --follow --tail 10
 ```
 
-Finally, check it works by visiting https://demo.approov.io.
+Next, once this is the web server for the Traefik service itself you need to restart the same for it to be able to generate the LetEncrypt certificate for himself:
+
+```console
+cd /opt/traefik
+sudo docker-compose down
+sudo docker-compose up --detach
+```
 
 Traefik will handle creation and renewal of LetsEncrypt certificates for you.
+
+Finally, check it works by visiting https://demo.approov.io. Bear in mind that it may take some seconds for having a valid certificate.
 
 
 ## Localhost Deployment
