@@ -6,7 +6,6 @@ A very simple Nginx server running on a docker container behind Traefik to serve
 
 This guide assumes that you are in the EC2 server that you setup by following the [AWS EC2 Traefik](https://github.com/approov/aws-ec2-traefik-setup) setup guide.
 
-
 First, create a docker network for Traefik:
 
 ```console
@@ -16,8 +15,10 @@ First, create a docker network for Traefik:
 Now, git clone this repo into the home folder `/home/ec2-user`:
 
 ```console
-git clone https://github.com/approov/core-demo-approov-io
+git@github.com:approov/aws-ec2-traefik-setup.git
 ```
+
+> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it.
 
 Next, get inside the repo:
 

@@ -4,8 +4,6 @@ services:
 
   dev:
     image: nginx:alpine
-    networks:
-      - traefik
     volumes:
       - "${CONTENT_DIR:-./public}:/usr/share/nginx/html"
     ports:
@@ -20,10 +18,10 @@ services:
       - "${CONTENT_DIR:-./public}:/usr/share/nginx/html"
     labels:
       - "traefik.enable=true"
-      - "traefik.backend=demo.approov.io"
+      - "traefik.backend=${HOSTNAME:-demo.approov.io}"
       - "traefik.docker.network=traefik"
       - "traefik.port=80"
-      - "traefik.frontend.rule=Host:demo.approov.io,approovr.net"
+      - "traefik.frontend.rule=Host:${PUBLIC_DOMAINS:-demo.approov.io,approovr.net}"
 
 networks:
   traefik:
