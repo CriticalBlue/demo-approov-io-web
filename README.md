@@ -19,7 +19,7 @@ Now, git clone this repo into the home folder `/home/ec2-user`:
 git@github.com:approov/aws-ec2-traefik-setup.git
 ```
 
-> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it. The default values are set in the `docker-compose.yml` file at the service `web`.
+> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it. The default values are set in the `docker-compose.yml` file at the services `web` and `redir`.
 
 Next, get inside the repo:
 
@@ -36,7 +36,7 @@ sudo docker pull nginx:alpine
 Next, start the docker stack:
 
 ```console
-sudo docker-compose up web --detach
+sudo docker-compose up --detach web redir
 ```
 
 Now, to tail the logs (optional):
