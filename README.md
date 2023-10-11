@@ -1,61 +1,39 @@
 # Approov Demo Server
 
-A very simple Nginx server running on a docker container behind Traefik to serve as the homepage for demo.approov.io, the default page used by the Traefik setup.
+A very simple Nginx server running on a docker container behind Traefik to serve as the homepage for demo.approov.io, the default page used by the Traefik setup. This also re-directs any undefined subdomains of demo.approov.io to the default page.
+
 
 ## Production Deployment
 
-This guide assumes that you are in the EC2 server that you setup by following the [AWS EC2 Traefik](https://github.com/approov/aws-ec2-traefik-setup) setup guide.
+This guide assumes that you are logged in to the EC2 server that you set up by following the instructions for [AWS EC2 Traefik Setup for demo.approov.io](https://github.com/CriticalBlue/demo-approov-io-traefik). If you followed these instructions, the docker network `traefik`, which is required, will already exist. It can be re-created using this command: `sudo docker network create traefik`.
 
-First, create a docker network for Traefik:
-
-```console
-sudo docker network create traefik
-```
-> **NOTE:** This network should already exist if you followed to the letter the [Traefik setup](https://github.com/approov/aws-ec2-traefik-setup).
-
-Now, git clone this repo into the home folder `/home/ec2-user`:
+Git clone this repo into the home folder `/home/ec2-user` and change to the newly created directory:
 
 ```console
-git@github.com:approov/aws-ec2-traefik-setup.git
+git clone https://github.com/CriticalBlue/demo-approov-io-web.git && cd demo-approov-io-web
 ```
 
-> **NOTE**: If you are running the deployment in a box that isn't demo.approov.io then copy `.env.example` to `.env` and customize it. The default values are set in the `docker-compose.yml` file at the service `web`.
+> **NOTE**: If you are running the deployment in a box that isn't `demo.approov.io` then copy `.env.example` to `.env` and customize it. The default values are set in the `docker-compose.yml` file at the services `web` and `redir`.
 
-Next, get inside the repo:
-
-```console
-cd core-demo-approov-io
-```
-
-Now, pull the docker image for Nginx:
+Pull the docker image for Nginx:
 
 ```console
 sudo docker pull nginx:alpine
 ```
 
-Next, start the docker stack:
+Start the web server and redirection services:
 
 ```console
-sudo docker-compose up web --detach
+sudo docker-compose up --detach web redir
 ```
 
-Now, to tail the logs (optional):
+Inspect the logs (optional):
 
 ```console
 sudo docker-compose logs --follow --tail 10
 ```
 
-Next, once this is the web server for the Traefik service itself you need to restart the same for it to be able to generate the LetEncrypt certificate for himself:
-
-```console
-cd /opt/traefik
-sudo docker-compose down
-sudo docker-compose up --detach
-```
-
-Traefik will handle creation and renewal of LetsEncrypt certificates for you.
-
-Finally, check it works by visiting https://demo.approov.io. Bear in mind that it may take some seconds for having a valid certificate.
+Finally, check the web server works by visiting [https://demo.approov.io](https://demo.approov.io). Also check that the redirection to the main page works by visiting a nonexisting subdomain of `demo.approov.io`, for example [https://nonexistent.demo.approov.io](https://nonexistent.demo.approov.io).
 
 
 ## Localhost Deployment
@@ -67,16 +45,10 @@ First, create a docker network for Traefik:
 ```
 > **NOTE:** In development Traefik isn't used, but the network is declared in the `docker-compose.yml` file .
 
-Now, git clone this repo into the a folder on your machine:
+Git clone this repo into the a folder on your machine:
 
 ```console
-git clone https://github.com/approov/core-demo-approov-io
-```
-
-Next, get inside the repo:
-
-```console
-cd core-demo-approov-io
+git clone https://github.com/CriticalBlue/demo-approov-io-web.git && cd demo-approov-io-web
 ```
 
 Now, pull the docker image for Nginx:
@@ -91,4 +63,4 @@ Next, start the docker stack:
 sudo docker-compose up dev
 ```
 
-Finally, check it works by visiting http://localhost and then make any changes needed to the `index.html` page a refresh the browser to see them.
+Finally, check it works by visiting http://localhost, then make any changes needed to the `index.html` page and refresh the browser to see them.

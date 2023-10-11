@@ -21,7 +21,25 @@ services:
       - "traefik.backend=${HOSTNAME:-demo.approov.io}"
       - "traefik.docker.network=traefik"
       - "traefik.port=80"
-      - "traefik.frontend.rule=Host:${PUBLIC_DOMAINS:-demo.approov.io,approovr.net}"
+      - "traefik.frontend.rule=Host:${PUBLIC_DOMAIN:-demo.approov.io}"
+
+  redir:
+    image: nginx:alpine
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - "${CONTENT_DIR:-./public}:/usr/share/nginx/html"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=${HOSTNAME:-demo.approov.io}"
+      - "traefik.docker.network=traefik"
+      - "traefik.port=80"
+      # Low-priority catch-all rule to direct all undefined sub-domains to the default home page
+      - "traefik.frontend.rule=HostRegexp:{dummy:.*${PUBLIC_DOMAIN:-demo.approov.io}}"
+      - "traefik.frontend.priority=1"
+      - "traefik.frontend.redirect.regex=^https://.*${PUBLIC_DOMAIN:-demo.approov.io}.*"
+      - "traefik.frontend.redirect.replacement=https://${PUBLIC_DOMAIN:-demo.approov.io}"
 
 networks:
   traefik:
